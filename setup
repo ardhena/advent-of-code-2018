@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "Creating day_$1 directory..."
+cp -r ./_template "./day_$1"
+echo "Done"
