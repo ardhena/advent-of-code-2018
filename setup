@@ -1,5 +1,22 @@
 #!/bin/bash
 
-echo "Creating day_$1 directory..."
-cp -r ./_template "./day_$1"
+echo "Creating $1/day_$2 directory..."
+mkdir -p "./$1/day_$2"
+
+if [ "$3" == "elixir" ]; then
+	echo "Setting up elixir files"
+	cp ./_template/puzzle.exs "./$1/day_$2/"
+	cp ./_template/puzzle_test.exs "./$1/day_$2/"	
+else
+	if [ "$3" == "ruby" ]; then
+		echo "Setting up ruby files"
+		cp ./_template/puzzle.rb "./$1/day_$2/"
+		cp ./_template/puzzle_test.rb "./$1/day_$2/"	
+	else
+		echo "No language specified, skipping code templates"
+	fi
+fi
+cp ./_template/input "./$1/day_$2/"
+cp ./_template/README.md "./$1/day_$2/"
+
 echo "Done"
