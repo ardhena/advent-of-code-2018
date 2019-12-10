@@ -1,22 +1,29 @@
 #!/bin/bash
 
+if [ "$2" == "1" ] || [ "$2" == "2" ] || [ "$2" == "3" ] || [ "$2" == "4" ] || [ "$2" == "5" ] || [ "$2" == "6" ] || [ "$2" == "7" ] || [ "$2" == "8" ] || [ "$2" == "9" ]; then
+	directory_name="$1/day_0$2"
+else
+	directory_name="$1/day_$2"
+fi
+
 echo "Creating $1/day_$2 directory..."
-mkdir -p "./$1/day_$2"
+mkdir -p "./$directory_name"
 
 if [ "$3" == "elixir" ]; then
 	echo "Setting up elixir files"
-	cp ./_template/puzzle.exs "./$1/day_$2/"
-	cp ./_template/puzzle_test.exs "./$1/day_$2/"	
+	cp ./_template/puzzle.exs "./$directory_name/"
+	cp ./_template/puzzle_test.exs "./$directory_name/"	
 else
 	if [ "$3" == "ruby" ]; then
 		echo "Setting up ruby files"
-		cp ./_template/puzzle.rb "./$1/day_$2/"
-		cp ./_template/puzzle_test.rb "./$1/day_$2/"	
+		cp ./_template/puzzle.rb "./$directory_name/"
+		cp ./_template/puzzle_test.rb "./$directory_name/"	
 	else
 		echo "No language specified, skipping code templates"
 	fi
 fi
-cp ./_template/input "./$1/day_$2/"
-cp ./_template/README.md "./$1/day_$2/"
+
+cp ./_template/input "./$directory_name/"
+echo "[Puzzle](https://adventofcode.com/$1/day/$2)" >> "./$directory_name/README.md"
 
 echo "Done"
