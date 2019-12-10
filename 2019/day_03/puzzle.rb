@@ -1,19 +1,19 @@
 class Puzzle
-	def initialize(input = nil)
-		@input = (input || File.readlines("input").map(&:strip)).map{|line| line.split(",")}
-	end
+  def initialize(input = nil)
+    @input = (input || File.readlines("input").map(&:strip)).map{|line| line.split(",")}
+  end
 
-	def calc_part_1
+  def calc_part_1
     wires = @input.map{ |wire| translate_into_coords(wire) }
     cross_points = find_cross_points(wires)
     calculate_manhattan_distance(cross_points).min
-	end
+  end
 
-	def calc_part_2
+  def calc_part_2
     wires = @input.map{ |wire| translate_into_coords(wire) }
     cross_points = find_cross_points(wires)
     calculate_steps_to_nearest_intersection(cross_points).min
-	end
+  end
 
   private
 

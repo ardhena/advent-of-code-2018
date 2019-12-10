@@ -13,7 +13,7 @@ class PuzzleTest < Minitest::Test
     assert_equal 3412531, Puzzle.new().calc_part_1()
   end
 
-	def test_calc_part_2
+  def test_calc_part_2
     # calculates examples
     assert_equal 2, Puzzle.new([12]).calc_part_2()
     assert_equal 2, Puzzle.new([14]).calc_part_2()
@@ -22,5 +22,5 @@ class PuzzleTest < Minitest::Test
 
     # calculates from input file
     assert_equal 5115927, Puzzle.new().calc_part_2()
-	end
+  end
 end

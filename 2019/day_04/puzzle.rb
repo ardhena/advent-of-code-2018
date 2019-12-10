@@ -1,23 +1,23 @@
 class Puzzle
-	def initialize(input = nil)
-		@input = input || File.readlines("input").map(&:strip).first.split("-").map(&:to_i)
-	end
+  def initialize(input = nil)
+    @input = input || File.readlines("input").map(&:strip).first.split("-").map(&:to_i)
+  end
 
-	def calc_part_1
+  def calc_part_1
     sum = 0
-		(@input[0]..@input[1]).each do |number|
+    (@input[0]..@input[1]).each do |number|
       sum += 1 if fullfils_requirements_for_part_1?(number_to_array(number)) 
     end
     sum
-	end
+  end
 
-	def calc_part_2
-		sum = 0
+  def calc_part_2
+    sum = 0
     (@input[0]..@input[1]).each do |number|
       sum += 1 if fullfils_requirements_for_part_2?(number_to_array(number)) 
     end
     sum
-	end
+  end
 
   private
 
