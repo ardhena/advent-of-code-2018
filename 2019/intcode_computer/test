@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "testing backwards compatibility with puzzles using IncodeComputer"
+
+cd ../day_02/ && ruby puzzle_test.rb
+cd ../day_05/ && ruby puzzle_test.rb
+cd ../day_07/ && ruby puzzle_test.rb
