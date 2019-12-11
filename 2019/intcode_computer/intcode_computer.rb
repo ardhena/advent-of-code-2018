@@ -10,22 +10,33 @@ class IntcodeComputer
   JUMP_IF_FALSE_CODE = 6
   LESS_THAN_CODE = 7
   EQUALS_CODE = 8
+  ADJUST_RELATIVE_BASE_CODE = 9
   HALT_CODE = 99
 
   POSITION_MODE = 0
   IMMEDIATE_MODE = 1
+  RELATIVE_MODE = 2
+
+  DEFAULT_VALUE = 0
 
   def initialize(program)
     @program = program
     @halted = false
     @instruction_pointer = 0
+    @relative_base = 0
   end
 
   def run(input_value = nil)
     @input_value = input_value
     @output_values = []
 
-    handle_opcode
+    loop do
+      exit_code = handle_opcode
+      break if exit_code == :halt
+      break if exit_code == :pause
+    end
+
+    @program
   end
 
   attr_reader :halted, :output_values
@@ -61,22 +72,22 @@ class IntcodeComputer
         handle_less_than(args_mode)
       when EQUALS_CODE
         handle_equals(args_mode)
+      when ADJUST_RELATIVE_BASE_CODE
+        handle_adjust_relative_base(args_mode)
       end
-      
-    handle_opcode
   rescue InputMissingError
     :pause
   end
 
   def handle_halt
     @halted = true
-    @program
+    :halt
   end
 
   def handle_addition(args_mode)
     param_1 = fetch_value(@instruction_pointer+1, args_mode[0])
     param_2 = fetch_value(@instruction_pointer+2, args_mode[1])
-    target = @program[@instruction_pointer+3]
+    target = fetch_address(@instruction_pointer+3, args_mode[2])
 
     @program[target] = param_1 + param_2
 
@@ -86,15 +97,15 @@ class IntcodeComputer
   def handle_multiplication(args_mode)
     param_1 = fetch_value(@instruction_pointer+1, args_mode[0])
     param_2 = fetch_value(@instruction_pointer+2, args_mode[1])
-    target = @program[@instruction_pointer+3]
+    target = fetch_address(@instruction_pointer+3, args_mode[2])
 
     @program[target] = param_1 * param_2
 
     @instruction_pointer+4
   end
 
-  def handle_input(_args_mode)
-    target =  @program[@instruction_pointer+1]
+  def handle_input(args_mode)
+    target = fetch_address(@instruction_pointer+1, args_mode[0])
     @program[target] = 
       if @input_value.is_a?(Array) && !@input_value.empty?
         @input_value.pop
@@ -131,7 +142,7 @@ class IntcodeComputer
   def handle_less_than(args_mode)
     param_1 = fetch_value(@instruction_pointer+1, args_mode[0])
     param_2 = fetch_value(@instruction_pointer+2, args_mode[1])
-    target =  @program[@instruction_pointer+3]
+    target = fetch_address(@instruction_pointer+3, args_mode[2])
 
     @program[target] = param_1 < param_2 ? 1 : 0
 
@@ -141,15 +152,28 @@ class IntcodeComputer
   def handle_equals(args_mode)
     param_1 = fetch_value(@instruction_pointer+1, args_mode[0])
     param_2 = fetch_value(@instruction_pointer+2, args_mode[1])
-    target =  @program[@instruction_pointer+3]
+    target = fetch_address(@instruction_pointer+3, args_mode[2])
 
     @program[target] = param_1 == param_2 ? 1 : 0
 
     @instruction_pointer+4
   end
 
+  def handle_adjust_relative_base(args_mode)
+    param_1 = fetch_value(@instruction_pointer+1, args_mode[0])
+
+    @relative_base += param_1
+    @instruction_pointer+2
+  end
+
   def fetch_value(instruction_pointer, mode)
-    return @program[@program[instruction_pointer]] if mode == POSITION_MODE
-    return @program[instruction_pointer] if mode == IMMEDIATE_MODE
+    return @program[@program[instruction_pointer] || DEFAULT_VALUE] || DEFAULT_VALUE if mode == POSITION_MODE
+    return @program[instruction_pointer] || DEFAULT_VALUE if mode == IMMEDIATE_MODE
+    return @program[@relative_base + (@program[instruction_pointer] || DEFAULT_VALUE)] if mode == RELATIVE_MODE
+  end
+
+  def fetch_address(instruction_pointer, mode)
+    return @relative_base + (@program[instruction_pointer] || DEFAULT_VALUE) if mode == RELATIVE_MODE
+    @program[instruction_pointer] || DEFAULT_VALUE
   end
 end
