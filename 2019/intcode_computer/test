@@ -7,3 +7,4 @@ cd ../day_05/ && ruby puzzle_test.rb
 cd ../day_07/ && ruby puzzle_test.rb
 cd ../day_09/ && ruby puzzle_test.rb
 cd ../day_11/ && ruby puzzle_test.rb
+cd ../day_13/ && ruby puzzle_test.rb
