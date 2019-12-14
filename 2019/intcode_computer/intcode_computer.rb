@@ -26,8 +26,8 @@ class IntcodeComputer
     @relative_base = 0
   end
 
-  def run(input_value = nil)
-    @input_value = input_value
+  def run(input_value = [])
+    @input_value = input_value.is_a?(Array) ? input_value : [input_value]
     @output_values = []
 
     loop do
@@ -37,6 +37,20 @@ class IntcodeComputer
     end
 
     @program
+  end
+
+  def run_until_outputs(input_value, output_size)
+    @input_value = input_value.is_a?(Array) ? input_value : [input_value]
+    @output_values = []
+
+    loop do
+      exit_code = handle_opcode
+      break if exit_code == :halt
+      break if exit_code == :pause
+      break if @output_values.size >= output_size
+    end
+
+    @program    
   end
 
   attr_reader :halted, :output_values
@@ -109,10 +123,12 @@ class IntcodeComputer
     @program[target] = 
       if @input_value.is_a?(Array) && !@input_value.empty?
         @input_value.pop
-      elsif @input_value.is_a?(Array) && @input_value.empty?
+      elsif (@input_value.is_a?(Array) && @input_value.empty?) || @input_value.nil?
         raise InputMissingError
       else
-        @input_value
+        val = @input_value
+        @input_value = nil
+        val
       end
 
     @instruction_pointer+2
